@@ -2,250 +2,255 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FF SUPREME PROXY - IDENTITY SPOOFER</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garena Security - Admin Control Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500;700&family=Orbitron:wght@900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono&display=swap');
 
         :root {
-            --neon: #00ff41;
-            --bg: #010101;
+            --garena-red: #ed1c24;
+            --dark-bg: #0a0a0c;
         }
 
         body {
-            background-color: var(--bg);
-            color: var(--neon);
-            font-family: 'Fira Code', monospace;
+            background-color: var(--dark-bg);
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
             overflow-x: hidden;
-            min-height: 100vh;
         }
 
-        .orbitron { font-family: 'Orbitron', sans-serif; }
-
-        /* Hiệu ứng nhiễu sóng Matrix */
-        .matrix-lines {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px);
-            background-size: 30px 30px;
-            z-index: -1;
+        .garena-gradient {
+            background: linear-gradient(135deg, #ed1c24 0%, #951217 100%);
         }
 
-        .main-card {
-            background: rgba(0, 15, 0, 0.9);
-            border: 1px solid var(--neon);
-            box-shadow: 0 0 50px rgba(0, 255, 65, 0.15);
-            position: relative;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
         }
 
-        .btn-supreme {
-            background: var(--neon);
-            color: black;
-            font-weight: 900;
-            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(237, 28, 36, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(237, 28, 36, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(237, 28, 36, 0); }
         }
 
-        .btn-supreme:hover:not(:disabled) {
-            letter-spacing: 2px;
-            box-shadow: 0 0 40px var(--neon);
-            transform: translateY(-3px);
+        .active-pulse {
+            animation: pulse-red 2s infinite;
         }
 
-        .progress-container {
-            height: 6px;
-            background: #111;
-            border: 1px solid #222;
-            overflow: hidden;
+        .terminal-scroll::-webkit-scrollbar {
+            width: 4px;
         }
-
-        #bar {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, #00ff41, #fff);
-            box-shadow: 0 0 15px #00ff41;
+        .terminal-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
         }
-
-        .terminal-text {
-            font-size: 10px;
-            line-height: 1.5;
-            animation: typing 0.2s steps(40);
-        }
-
-        @keyframes typing { from { width: 0 } to { width: 100% } }
-
-        /* Animation cho các icon */
-        .spin-slow { animation: spin 8s linear infinite; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="flex flex-col items-center justify-center p-5">
+<body class="min-h-screen flex flex-col">
 
-    <div class="matrix-lines"></div>
-
-    <!-- UI Decor -->
-    <div class="fixed top-5 left-5 opacity-30 text-[8px] orbitron">SYS_LATENCY: 14ms<br>ENCRYPTION: AES-256</div>
-    <div class="fixed top-5 right-5 opacity-30 text-[8px] orbitron text-right">NODE: VN_DANG_NGUYEN<br>STATUS: BYPASSING</div>
-
-    <div class="w-full max-w-md main-card p-8 rounded-lg">
-        <!-- Logo Section -->
-        <div class="flex flex-col items-center mb-8">
-            <div class="relative w-16 h-16 mb-4">
-                <i data-lucide="aperture" class="w-16 h-16 text-[#00ff41] spin-slow"></i>
-                <div class="absolute inset-0 bg-[#00ff41] blur-xl opacity-20"></div>
-            </div>
-            <h1 class="orbitron text-2xl font-black italic tracking-tighter text-white">SUPREME <span class="text-[#00ff41]">PROXY</span></h1>
-            <p class="text-[8px] text-gray-500 font-bold uppercase tracking-[0.4em]">Identity Spoofing v6.0</p>
-        </div>
-
-        <!-- Input Area -->
-        <div class="space-y-6">
+    <!-- Header -->
+    <header class="p-6 border-b border-white/5 flex items-center justify-between bg-black/40 backdrop-blur-md sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 garena-gradient rounded-lg flex items-center justify-center font-black text-white italic shadow-lg">G</div>
             <div>
-                <label class="text-[9px] font-black uppercase text-gray-500 mb-2 block tracking-widest">Player UID Target</label>
-                <div class="relative">
-                    <input type="number" id="uid" placeholder="NHẬP ID TÀI KHOẢN..." 
-                           class="w-full bg-black/80 border border-green-500/30 p-4 pl-12 text-xl font-bold text-white outline-none focus:border-[#00ff41] shadow-inner">
-                    <i data-lucide="user-plus" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 opacity-40"></i>
+                <h1 class="font-extrabold text-lg tracking-tight uppercase">Security <span class="text-[#ed1c24]">Dashboard</span></h1>
+                <p class="text-[10px] text-gray-500 font-bold tracking-widest uppercase">Internal Garena Network v4.8</p>
+            </div>
+        </div>
+        <div class="hidden md:flex items-center gap-6 text-[11px] font-semibold text-gray-400">
+            <div class="flex items-center gap-2"><span class="w-2 h-2 bg-green-500 rounded-full"></span> SERVER: VN-SOUTH-1</div>
+            <div class="flex items-center gap-2"><i data-lucide="user" class="w-4 h-4"></i> ADMIN: STAFF_8842</div>
+        </div>
+    </header>
+
+    <main class="flex-1 p-4 md:p-8 max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Left Panel: Form xử lý -->
+        <div class="lg:col-span-1 space-y-6">
+            <div class="glass-card p-6">
+                <div class="flex items-center gap-2 mb-6 text-red-500">
+                    <i data-lucide="shield-alert" class="w-5 h-5"></i>
+                    <h2 class="text-sm font-bold uppercase tracking-wider">Xử lý vi phạm</h2>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-500 uppercase mb-2 block">Player UID</label>
+                        <input type="number" id="targetID" placeholder="Nhập ID cần kiểm tra..." 
+                               class="w-full bg-black/50 border border-white/10 rounded-lg p-4 text-xl font-bold focus:border-red-600 outline-none transition-all">
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-500 uppercase mb-2 block">Lý do đình chỉ</label>
+                        <select id="reason" class="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-sm outline-none focus:border-red-600">
+                            <option value="Hacking/Third Party Software">Sử dụng phần mềm thứ 3</option>
+                            <option value="Toxicity/Bad Behavior">Ngôn từ độc hại/Hành vi xấu</option>
+                            <option value="Abnormal Account Activity">Hoạt động bất thường</option>
+                            <option value="Chargeback/Payment Fraud">Gian lận thanh toán</option>
+                        </select>
+                    </div>
+
+                    <div class="pt-4">
+                        <button onclick="processEnforcement()" id="btnAction" 
+                                class="w-full garena-gradient py-4 rounded-lg font-bold text-white uppercase tracking-widest shadow-lg hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2">
+                            <i data-lucide="hammer" class="w-5 h-5"></i> Thực thi hình phạt
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
-                <div class="bg-black/50 p-3 border border-green-900/50">
-                    <p class="text-[7px] text-gray-500 uppercase">Target Identity</p>
-                    <p class="text-[9px] font-bold text-white uppercase italic">TOP 1 WEALTH VN</p>
+            <!-- Stats -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="glass-card p-4">
+                    <p class="text-[9px] text-gray-500 font-bold uppercase">Báo cáo mới</p>
+                    <p class="text-2xl font-black text-white mt-1">1,204</p>
                 </div>
-                <div class="bg-black/50 p-3 border border-green-900/50">
-                    <p class="text-[7px] text-gray-500 uppercase">Emote Sync</p>
-                    <p class="text-[9px] font-bold text-white uppercase italic">Status: ACTIVE</p>
-                </div>
-            </div>
-
-            <!-- Loader (Hidden) -->
-            <div id="loader" class="hidden space-y-3">
-                <div class="flex justify-between text-[10px] orbitron">
-                    <span id="load-status">INITIALIZING...</span>
-                    <span id="percent">0%</span>
-                </div>
-                <div class="progress-container">
-                    <div id="bar"></div>
+                <div class="glass-card p-4">
+                    <p class="text-[9px] text-gray-500 font-bold uppercase">Đã xử lý (24h)</p>
+                    <p class="text-2xl font-black text-green-500 mt-1">842</p>
                 </div>
             </div>
-
-            <button id="btn" onclick="run()" class="btn-supreme w-full py-5 text-lg orbitron italic uppercase">
-                Inject Identity
-            </button>
         </div>
 
-        <!-- Terminal Output -->
-        <div class="mt-8 bg-black/90 p-4 rounded border border-green-900/30 font-mono text-[9px] h-32 overflow-y-auto no-scrollbar" id="logs">
-            <div class="text-gray-600 italic">>> System dormant. Waiting for UID...</div>
+        <!-- Right Panel: Data & Terminal -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Processing Terminal -->
+            <div class="glass-card overflow-hidden flex flex-col h-[400px]">
+                <div class="bg-white/5 px-4 py-2 flex items-center justify-between border-b border-white/5">
+                    <span class="text-[10px] font-bold tracking-widest text-gray-400 uppercase flex items-center gap-2">
+                        <i data-lucide="cpu" class="w-3 h-3 text-red-500"></i> Console System
+                    </span>
+                    <div class="flex gap-1.5">
+                        <div class="w-2 h-2 rounded-full bg-red-500/20"></div>
+                        <div class="w-2 h-2 rounded-full bg-yellow-500/20"></div>
+                        <div class="w-2 h-2 rounded-full bg-green-500/20"></div>
+                    </div>
+                </div>
+                <div id="terminal" class="p-4 flex-1 overflow-y-auto terminal-scroll mono text-[11px] space-y-1.5 bg-black/20">
+                    <div class="text-gray-500 italic opacity-50">Sẵn sàng nhận dữ liệu ID...</div>
+                </div>
+            </div>
+
+            <!-- Global Activity Feed -->
+            <div class="glass-card p-6">
+                <h3 class="text-xs font-bold uppercase mb-4 text-gray-400">Hoạt động thời gian thực</h3>
+                <div class="space-y-4" id="activityFeed">
+                    <div class="flex items-center justify-between text-[11px] border-b border-white/5 pb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded bg-yellow-500/10 flex items-center justify-center text-yellow-500"><i data-lucide="search" class="w-4 h-4"></i></div>
+                            <div>
+                                <p class="font-bold">Đang kiểm tra ID: 1042***42</p>
+                                <p class="text-gray-500">Khu vực: Hà Nội, VN</p>
+                            </div>
+                        </div>
+                        <span class="text-yellow-500 font-bold">SCANNING</span>
+                    </div>
+                </div>
+            </div>
         </div>
+    </main>
+
+    <!-- Success Overlay -->
+    <div id="overlay" class="fixed inset-0 bg-black/95 z-[100] hidden flex-col items-center justify-center p-10 text-center animate-in fade-in zoom-in duration-300">
+        <div class="w-24 h-24 bg-red-600 rounded-full flex items-center justify-center mb-8 active-pulse">
+            <i data-lucide="shield-off" class="w-12 h-12 text-white"></i>
+        </div>
+        <h2 class="text-4xl font-black italic mb-4 text-white">ĐÌNH CHỈ THÀNH CÔNG</h2>
+        <div class="glass-card p-6 max-w-md w-full border-red-500/30">
+            <p class="text-sm text-gray-300 mb-4">Tài khoản ID <span id="displayID" class="text-red-500 font-bold"></span> đã bị tạm khóa.</p>
+            <div class="grid grid-cols-2 gap-4 text-left text-[11px]">
+                <div class="bg-white/5 p-3 rounded">
+                    <p class="text-gray-500 mb-1">Thời gian khóa</p>
+                    <p class="text-white font-bold uppercase">7 Ngày (168 giờ)</p>
+                </div>
+                <div class="bg-white/5 p-3 rounded">
+                    <p class="text-gray-500 mb-1">Mã lệnh</p>
+                    <p class="text-red-500 font-bold uppercase">BAN_SUSP_7D</p>
+                </div>
+            </div>
+        </div>
+        <button onclick="location.reload()" class="mt-10 px-12 py-4 border border-white/10 text-gray-400 hover:text-white transition-all text-xs font-bold uppercase">Quay lại bảng điều khiển</button>
     </div>
 
-    <!-- Warning Box -->
-    <div class="w-full max-w-md mt-6 p-4 bg-red-950/10 border border-red-900/20 rounded-lg flex gap-4 items-start">
-        <i data-lucide="shield-x" class="text-red-600 w-8 h-8 animate-pulse shrink-0"></i>
-        <div class="text-[8px] text-gray-500 uppercase leading-relaxed">
-            <b class="text-red-500">Protocol Disclaimer:</b> Dữ liệu Identity sẽ được giả lập qua Proxy Server trung gian. Mọi vật phẩm (Đồ, KC) chỉ hiển thị cục bộ (Client-side). Các hành động (Emotes) được đồng bộ hóa công khai.
-        </div>
-    </div>
-
-    <!-- Success Screen -->
-    <div id="success" class="fixed inset-0 bg-black z-[200] hidden flex-col items-center justify-center p-10 text-center animate-in fade-in duration-500">
-        <div class="relative mb-10">
-            <i data-lucide="unlock" class="w-24 h-24 text-[#00ff41] relative z-10"></i>
-            <div class="absolute inset-0 bg-[#00ff41] blur-3xl opacity-30 animate-pulse"></div>
-        </div>
-        <h2 class="orbitron text-4xl font-black italic text-white mb-6">IDENTITY LOADED</h2>
-        <div class="space-y-4 max-w-xs mb-10">
-            <p class="text-xs text-gray-400">Tài khoản ID <span id="res-id" class="text-[#00ff41] font-bold"></span> đã được chuyển vùng sang Proxy VIP.</p>
-            <div class="bg-white/5 p-4 rounded text-[9px] text-left text-white/50 border border-white/10 uppercase font-bold">
-                - 99,999,999 Diamonds Generated<br>
-                - All Evo Gun Max Level<br>
-                - Public Emote Sync Active
-            </div>
-        </div>
-        <button onclick="location.reload()" class="orbitron border border-[#00ff41] px-12 py-4 text-xs hover:bg-[#00ff41] hover:text-black transition-all">TERMINATE PROXY</button>
-    </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
+    <script>
         lucide.createIcons();
 
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'ff-supreme-proxy';
+        function addLog(msg, type = 'info') {
+            const terminal = document.getElementById('terminal');
+            const div = document.createElement('div');
+            const color = type === 'error' ? 'text-red-500' : type === 'success' ? 'text-green-500' : 'text-gray-400';
+            div.className = `${color} flex gap-2`;
+            div.innerHTML = `<span class="opacity-30">[${new Date().toLocaleTimeString()}]</span> <span>${msg}</span>`;
+            terminal.appendChild(div);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
 
-        window.run = async function() {
-            const idVal = document.getElementById('uid').value;
-            if(!idVal) return;
+        async function processEnforcement() {
+            const uid = document.getElementById('targetID').value;
+            const reason = document.getElementById('reason').value;
 
-            const btn = document.getElementById('btn');
-            const loader = document.getElementById('loader');
-            const bar = document.getElementById('bar');
-            const pct = document.getElementById('percent');
-            const status = document.getElementById('load-status');
-
-            btn.disabled = true;
-            btn.innerText = "SPOOFING...";
-            loader.classList.remove('hidden');
-
-            try {
-                // Bước "Tác dụng thật": Lưu ID vào Cloud
-                const cred = await signInAnonymously(auth);
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'injections'), {
-                    uid: idVal,
-                    method: 'SUPREME_PROXY',
-                    time: Date.now()
-                });
-
-                log("Identity injection sequence started...");
-                
-                let p = 0;
-                const itv = setInterval(() => {
-                    p += Math.random() * 5;
-                    if(p >= 100) {
-                        p = 100;
-                        clearInterval(itv);
-                        showSuccess(idVal);
-                    }
-                    bar.style.width = p + "%";
-                    pct.innerText = Math.floor(p) + "%";
-
-                    if(p > 20 && p < 25) { status.innerText = "BYPASSING GARENA-VN..."; log("Firewall VN-North breached."); }
-                    if(p > 50 && p < 55) { status.innerText = "SYNCING PACKETS..."; log("Injecting Emote Headers..."); }
-                    if(p > 80 && p < 85) { status.innerText = "ESTABLISHING PROXY..."; log("Virtual Identity Tunnel secured."); }
-                }, 150);
-
-            } catch(e) {
-                log("ERROR: UNABLE TO CONNECT TO CLOUD SERVER!", "text-red-500");
-                btn.disabled = false;
+            if(!uid || uid.length < 5) {
+                alert("Vui lòng nhập ID hợp lệ!");
+                return;
             }
-        };
 
-        function log(msg, cls = "text-gray-400") {
-            const logs = document.getElementById('logs');
-            const d = document.createElement('div');
-            d.className = `terminal-text ${cls}`;
-            d.innerHTML = `<span class="text-[#00ff41] mr-2">root@proxy:~#</span> ${msg}`;
-            logs.appendChild(d);
-            logs.scrollTop = logs.scrollHeight;
+            const btn = document.getElementById('btnAction');
+            btn.disabled = true;
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> ĐANG TRUY VẤN...`;
+            lucide.createIcons();
+
+            // Quy trình mô phỏng
+            addLog(`Đang khởi tạo truy vấn cơ sở dữ liệu cho ID: ${uid}...`);
+            
+            setTimeout(() => {
+                addLog(`Đang kiểm tra lịch sử đăng nhập & IP...`);
+                addLog(`Tìm thấy bằng chứng vi phạm: ${reason}`, 'error');
+            }, 1000);
+
+            setTimeout(() => {
+                addLog(`Đang gửi lệnh yêu cầu đình chỉ tới Global Master Server...`);
+                addLog(`Xác nhận bồi hoàn dữ liệu ảo (nếu có)...`);
+            }, 2500);
+
+            setTimeout(() => {
+                addLog(`Đình chỉ thành công. Mã hiệu lực: G-SEC-${Math.floor(Math.random()*99999)}`, 'success');
+                
+                document.getElementById('displayID').innerText = uid;
+                document.getElementById('overlay').classList.remove('hidden');
+                document.getElementById('overlay').classList.add('flex');
+            }, 4500);
         }
 
-        function showSuccess(id) {
-            document.getElementById('res-id').innerText = id;
-            document.getElementById('success').classList.remove('hidden');
-            document.getElementById('success').classList.add('flex');
-        }
+        // Tạo activity feed giả
+        setInterval(() => {
+            const feed = document.getElementById('activityFeed');
+            const ids = ["104","281","942","338","771"];
+            const id = ids[Math.floor(Math.random()*ids.length)] + "***" + Math.floor(Math.random()*99);
+            
+            const item = document.createElement('div');
+            item.className = "flex items-center justify-between text-[11px] border-b border-white/5 pb-3 animate-in slide-in-from-right duration-500";
+            item.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded bg-red-500/10 flex items-center justify-center text-red-500"><i data-lucide="shield" class="w-4 h-4"></i></div>
+                    <div>
+                        <p class="font-bold">Đã khóa ID: ${id}</p>
+                        <p class="text-gray-500 italic">Vi phạm: Hack Speed/Fly</p>
+                    </div>
+                </div>
+                <span class="text-red-500 font-bold italic">SUSPENDED</span>
+            `;
+            
+            if(feed.children.length > 3) feed.removeChild(feed.lastChild);
+            feed.prepend(item);
+            lucide.createIcons();
+        }, 8000);
     </script>
 </body>
 </html>
