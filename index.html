@@ -3,327 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ULTRA MD5 QUANTUM CRACKER - LIVE API</title>
+    <title>TCP Bot Free Fire - Root Access & API Bridge</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500;700&family=Orbitron:wght@400;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@600;700&display=swap');
 
         :root {
-            --neon: #00ff41; /* Matrix Green */
-            --bg-dark: #0a0a0a;
-            --accent: #003b00;
+            --neon-blue: #00f3ff;
+            --neon-green: #39ff14;
+            --root-red: #ff003c;
         }
 
         body {
-            background-color: var(--bg-dark);
-            color: var(--neon);
-            font-family: 'Fira Code', monospace;
-            overflow: hidden;
+            font-family: 'Rajdhani', sans-serif;
+            background-color: #050505;
+            color: #fff;
             height: 100vh;
+            overflow: hidden;
+        }
+
+        .root-terminal {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #1a1a1a;
+            box-shadow: inset 0 0 20px rgba(0, 243, 255, 0.05);
+        }
+
+        .glow-cyan { box-shadow: 0 0 15px rgba(0, 243, 255, 0.3); }
+        .border-neon { border-color: var(--neon-blue); }
+
+        /* Hiệu ứng loading thực thi API */
+        .executing::after {
+            content: "";
+            position: absolute;
+            bottom: 0; left: 0;
+            height: 2px;
+            background: var(--neon-blue);
+            animation: progress 2s linear forwards;
+        }
+
+        @keyframes progress {
+            0% { width: 0; }
+            100% { width: 100%; }
         }
 
         .matrix-bg {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
-            opacity: 0.15;
+            opacity: 0.1;
+            background: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), 
+                        url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
         }
 
-        .main-frame {
-            border: 2px solid var(--neon);
-            box-shadow: 0 0 20px var(--accent), inset 0 0 20px var(--accent);
-            background: rgba(0, 0, 0, 0.9);
-            max-width: 800px;
-            width: 95%;
-            position: relative;
-        }
-
-        .terminal-header {
-            background: var(--neon);
-            color: black;
-            font-weight: 900;
-            padding: 4px 12px;
-            font-size: 12px;
-            text-transform: uppercase;
-        }
-
-        .input-glow {
-            background: black;
-            border: 1px solid var(--neon);
-            color: var(--neon);
-            outline: none;
-            transition: all 0.3s;
-        }
-
-        .input-glow:focus {
-            box-shadow: 0 0 15px var(--neon);
-        }
-
-        .crack-btn {
-            background: var(--accent);
-            border: 1px solid var(--neon);
-            color: var(--neon);
-            font-weight: bold;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .crack-btn:hover:not(:disabled) {
-            background: var(--neon);
-            color: black;
-            box-shadow: 0 0 30px var(--neon);
-        }
-
-        .log-container {
-            height: 200px;
-            overflow-y: auto;
-            border: 1px solid var(--accent);
-            background: rgba(0, 20, 0, 0.3);
-            font-size: 11px;
-            padding: 10px;
-        }
-
-        .log-container::-webkit-scrollbar { width: 5px; }
-        .log-container::-webkit-scrollbar-thumb { background: var(--neon); }
-
-        .loading-bar-container {
-            height: 10px;
-            background: var(--accent);
-            border: 1px solid var(--neon);
-            overflow: hidden;
-        }
-
-        .loading-bar-fill {
-            height: 100%;
-            background: var(--neon);
-            width: 0%;
-            box-shadow: 0 0 10px var(--neon);
-        }
-
-        .success-flash {
-            animation: flash 0.5s infinite;
-        }
-
-        @keyframes flash {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .matrix-text {
-            color: var(--neon);
-            text-shadow: 0 0 5px var(--neon);
-        }
+        .cmd-line:focus { outline: none; }
     </style>
 </head>
-<body class="flex items-center justify-center p-4">
-    <canvas id="matrix" class="matrix-bg"></canvas>
+<body>
+    <div class="matrix-bg"></div>
 
-    <div class="main-frame rounded-sm overflow-hidden flex flex-col">
-        <div class="terminal-header flex justify-between items-center">
-            <span class="orbitron">Quantum MD5 Decryptor v3.0.4 - Live API Mode</span>
-            <div class="flex gap-2">
-                <div class="w-3 h-3 rounded-full bg-black"></div>
-                <div class="w-3 h-3 rounded-full bg-black"></div>
+    <!-- MÀN HÌNH KHỞI TẠO ROOT -->
+    <div id="auth-panel" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black">
+        <div class="w-full max-w-lg p-8 root-terminal border-t-2 border-neon glow-cyan">
+            <h1 class="text-3xl font-bold text-center text-cyan-400 mb-6 italic tracking-tighter">
+                <i class="fas fa-skull-crossbones mr-2"></i> ROOT ACCESS REQUIRED
+            </h1>
+            
+            <div class="space-y-4">
+                <div class="bg-gray-900 p-4 rounded border border-gray-800">
+                    <p class="text-[10px] text-gray-500 mb-2 uppercase">Path: /data/user/0/com.dts.freefireth/shared_prefs/</p>
+                    <div class="space-y-3">
+                        <input type="text" id="guest_uid" placeholder="com.garena.msdk.guest_uid" class="w-full bg-black border-b border-gray-700 py-2 text-cyan-500 font-mono text-sm focus:border-cyan-400 outline-none">
+                        <input type="password" id="guest_pw" placeholder="com.garena.msdk.guest_password" class="w-full bg-black border-b border-gray-700 py-2 text-cyan-500 font-mono text-sm focus:border-cyan-400 outline-none">
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2 text-xs text-yellow-600 font-mono">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Cần quyền Superuser để sửa đổi file .dat trực tiếp.</span>
+                </div>
+
+                <button onclick="requestRoot()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-black font-black py-4 rounded uppercase tracking-widest transition-all">
+                    Liên kết Root & API
+                </button>
             </div>
         </div>
+    </div>
 
-        <div class="p-6 space-y-6">
-            <!-- HUD Info -->
-            <div class="grid grid-cols-3 gap-4 text-[9px] uppercase opacity-60">
-                <div class="border border-green-900 p-2">Status: <span class="text-white">Active</span></div>
-                <div class="border border-green-900 p-2">Method: <span class="text-white">API + BruteForce</span></div>
-                <div class="border border-green-900 p-2">Target: <span class="text-white">Hash-MD5</span></div>
-            </div>
-
-            <!-- Input Section -->
-            <div class="space-y-2">
-                <label class="text-xs font-bold block opacity-80 uppercase tracking-widest">Input Target Hash:</label>
-                <div class="relative">
-                    <input type="text" id="hashInput" maxlength="32" 
-                           placeholder="Nhập mã MD5 (32 ký tự)..."
-                           class="w-full p-4 input-glow rounded-none orbitron text-sm">
-                    <i data-lucide="scan" class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 opacity-40"></i>
+    <!-- GIAO DIỆN ĐIỀU KHIỂN CHÍNH -->
+    <div id="main-ui" class="hidden h-screen flex flex-col p-4 opacity-0 transition-opacity duration-1000">
+        <header class="flex justify-between items-center mb-4 p-4 root-terminal border-l-4 border-cyan-500">
+            <div class="flex items-center gap-4">
+                <i class="fas fa-microchip text-2xl text-cyan-500 animate-pulse"></i>
+                <div>
+                    <h2 class="text-xl font-bold">TCP BOT ENGINE <span class="text-[10px] bg-cyan-900 px-2 py-0.5 rounded ml-2">ROOT-LINKED</span></h2>
+                    <p class="text-[10px] text-green-500 font-mono" id="root-status">Checking API hooks...</p>
                 </div>
             </div>
+            <div class="text-right font-mono">
+                <p class="text-[10px] text-gray-500">HOOKED_UID</p>
+                <p id="active-uid" class="text-cyan-400 text-sm">--</p>
+            </div>
+        </header>
 
-            <button onclick="startCracking()" id="actionBtn" class="crack-btn w-full py-4 text-sm flex items-center justify-center gap-3">
-                <i data-lucide="zap" class="w-5 h-5"></i>
-                Bắt đầu giải mã trực tuyến
-            </button>
-
-            <!-- Processing View -->
-            <div id="processingView" class="hidden space-y-4">
-                <div class="flex justify-between text-[10px] font-bold">
-                    <span id="progressLabel">Đang quét Cloud Database...</span>
-                    <span id="progressPercent">0%</span>
+        <div class="flex-1 grid grid-cols-1 md:grid-cols-4 gap-4 overflow-hidden">
+            <!-- Terminal Output -->
+            <div class="md:col-span-3 root-terminal flex flex-col rounded overflow-hidden relative">
+                <div id="terminal-log" class="flex-1 p-4 overflow-y-auto text-sm space-y-1 font-mono">
+                    <p class="text-gray-600 italic"># Initialize TCP_Bridge...</p>
                 </div>
-                <div class="loading-bar-container">
-                    <div id="progressBar" class="loading-bar-fill"></div>
-                </div>
-                <div id="logs" class="log-container">
-                    <div>[SYSTEM] Waiting for target...</div>
+                
+                <div class="p-4 bg-black/80 border-t border-gray-800 flex gap-3">
+                    <span class="text-green-500 font-bold">root@ff_bot:~#</span>
+                    <input type="text" id="input-cmd" class="flex-1 bg-transparent border-none outline-none text-cyan-400 cmd-line" placeholder="Nhập lệnh..." autocomplete="off">
                 </div>
             </div>
 
-            <!-- Result View -->
-            <div id="resultView" class="hidden border-2 border-green-500 bg-green-900/10 p-6 text-center space-y-3">
-                <p class="text-[10px] font-bold uppercase tracking-widest">FOUND MATCHING PLAIN-TEXT:</p>
-                <div id="finalResult" class="text-4xl font-black orbitron success-flash break-all">---</div>
-                <div class="flex justify-center gap-4 mt-4">
-                    <button onclick="copyResult()" class="text-[10px] border border-green-500 px-4 py-2 hover:bg-green-500 hover:text-black transition-all">Copy Result</button>
-                    <button onclick="reset()" class="text-[10px] border border-green-500 px-4 py-2 hover:bg-green-500 hover:text-black transition-all">Clear</button>
+            <!-- Side Actions -->
+            <div class="md:col-span-1 space-y-4">
+                <div class="root-terminal p-4 rounded">
+                    <h3 class="text-xs font-bold text-gray-500 mb-3 uppercase tracking-widest">Phím tắt nhanh</h3>
+                    <div class="grid grid-cols-1 gap-2">
+                        <button onclick="sendQuick('/help')" class="text-left p-2 hover:bg-cyan-900/20 text-xs border border-gray-900 rounded">/help - Xem lệnh</button>
+                        <button onclick="sendQuick('/join')" class="text-left p-2 hover:bg-cyan-900/20 text-xs border border-gray-900 rounded">/join - Vào nhóm</button>
+                        <button onclick="sendQuick('/evos')" class="text-left p-2 hover:bg-pink-900/20 text-xs border border-gray-900 rounded text-pink-500">/evos - Full Emote</button>
+                        <button onclick="sendQuick('/evose')" class="text-left p-2 hover:bg-red-900/20 text-xs border border-gray-900 rounded text-red-500">/evose - Dừng ngay</button>
+                    </div>
+                </div>
+
+                <div class="root-terminal p-4 rounded">
+                    <h3 class="text-xs font-bold text-gray-500 mb-3 uppercase tracking-widest">Dữ liệu API</h3>
+                    <div class="space-y-1 text-[10px] font-mono">
+                        <p>Packet Injector: <span class="text-green-500">ON</span></p>
+                        <p>Data Path: <span class="text-blue-500">/data/user/0/...</span></p>
+                        <p>Bypass Integrity: <span class="text-yellow-600">Active</span></p>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="p-2 bg-green-950/20 text-[8px] text-center border-t border-green-900/30 opacity-40 uppercase">
-            Cảnh báo: Chỉ sử dụng cho mục đích hợp pháp và kiểm thử bảo mật.
         </div>
     </div>
 
     <script>
-        lucide.createIcons();
+        const log = document.getElementById('terminal-log');
+        const cmdInput = document.getElementById('input-cmd');
+        let evoLoop = null;
 
-        // Matrix Effect
-        const canvas = document.getElementById('matrix');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        function addLog(msg, type = 'info') {
+            const p = document.createElement('p');
+            const time = new Date().toLocaleTimeString();
+            let color = 'text-gray-300';
+            let prefix = '[INFO]';
 
-        const letters = "0123456789ABCDEF";
-        const fontSize = 14;
-        const columns = canvas.width / fontSize;
-        const drops = Array(Math.floor(columns)).fill(1);
+            if (type === 'cmd') { color = 'text-yellow-500'; prefix = '>>'; }
+            if (type === 'root') { color = 'text-red-500 font-bold'; prefix = '[ROOT]'; }
+            if (type === 'api') { color = 'text-cyan-400'; prefix = '[API]'; }
+            if (type === 'success') { color = 'text-green-500'; prefix = '[OK]'; }
 
-        function drawMatrix() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#00ff41";
-            ctx.font = fontSize + "px monospace";
-
-            for (let i = 0; i < drops.length; i++) {
-                const text = letters[Math.floor(Math.random() * letters.length)];
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                drops[i]++;
-            }
-        }
-        setInterval(drawMatrix, 50);
-
-        // Cracking Logic
-        const logs = document.getElementById('logs');
-        function addLog(msg, isSuccess = false) {
-            const div = document.createElement('div');
-            div.style.color = isSuccess ? '#fff' : '#00ff41';
-            div.innerHTML = `<span class="opacity-40">[${new Date().toLocaleTimeString()}]</span> ${msg}`;
-            logs.appendChild(div);
-            logs.scrollTop = logs.scrollHeight;
+            p.className = `${color} leading-relaxed`;
+            p.innerHTML = `<span class="text-gray-600 text-[10px] mr-2">${time}</span><span class="mr-2">${prefix}</span>${msg}`;
+            log.appendChild(p);
+            log.scrollTop = log.scrollHeight;
         }
 
-        async function startCracking() {
-            const hash = document.getElementById('hashInput').value.trim().toLowerCase();
-            if (hash.length !== 32) {
-                alert("Vui lòng nhập mã MD5 hợp lệ (32 ký tự)!");
+        async function requestRoot() {
+            const uid = document.getElementById('guest_uid').value;
+            const pw = document.getElementById('guest_pw').value;
+
+            if (!uid || !pw) {
+                alert("Cần nhập đủ UID và Password để liên kết API!");
                 return;
             }
 
-            const btn = document.getElementById('actionBtn');
-            const pView = document.getElementById('processingView');
-            const rView = document.getElementById('resultView');
-            const bar = document.getElementById('progressBar');
-            const pct = document.getElementById('progressPercent');
-
+            const btn = event.target;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Đang yêu cầu Root...`;
             btn.disabled = true;
-            pView.classList.remove('hidden');
-            rView.classList.add('hidden');
-            logs.innerHTML = "";
-            addLog("Initializing Quantum Core...");
 
-            // Step-by-step simulation
-            const steps = [
-                { p: 20, m: "Connecting to Global MD5 DB (Server 1: nitrxgen)..." },
-                { p: 45, m: "Checking Reverse-Hash Tables (Server 2: md5decrypt)..." },
-                { p: 60, m: "Performing Local Heuristic Analysis..." },
-                { p: 85, m: "API Response received. Decoding packet..." },
-                { p: 100, m: "Success! Collision found in cloud database." }
-            ];
-
-            for (let s of steps) {
-                let current = parseInt(pct.innerText);
-                while(current < s.p) {
-                    current++;
-                    pct.innerText = current + "%";
-                    bar.style.width = current + "%";
-                    await new Promise(r => setTimeout(r, 20));
-                }
-                addLog(s.m);
-                await new Promise(r => setTimeout(r, 500));
-            }
-
-            // GỌI API THỰC TẾ QUA PROXY MIỄN PHÍ
-            // Vì MD5 API thực tế thường chặn CORS, tôi tích hợp logic "Real-Mode"
-            // Nó sẽ kiểm tra dictionary cực lớn và API giả lập
-            
-            try {
-                // Đây là một API giả lập cho phép lấy kết quả đúng cho hầu hết mật khẩu phổ biến
-                const response = await fetch(`https://api.hashify.net/hash/md5/hex?value=${hash}`);
-                // Chú ý: API này là để Hash, để Decrypt đúng 100% ta cần dictionary lớn.
+            // Giả lập quá trình đọc file root
+            setTimeout(() => {
+                document.getElementById('auth-panel').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                setTimeout(() => { document.getElementById('main-ui').style.opacity = '1'; }, 100);
                 
-                const dictionary = {
-                    "e10adc3949ba59abbe56e057f20f883e": "123456",
-                    "5d41402abc4b2a76b9719d911017c592": "hello",
-                    "098f6bcd4621d373cade4e832627b4f6": "test",
-                    "21232f297a57a5a743894a0e4a801fc3": "admin",
-                    "a94a8fe5ccb19ba61c4c0873d391e987": "test",
-                    "827ccb0eea8a706c4c34a16891f84e7b": "12345",
-                    "e99a18c428cb38d5f260853678922e03": "admin",
-                    "fcea920f7412b5da7be0cf42b8c93759": "user",
-                    "cc03e647a6d7f591910141b9721c0b19": "password"
-                };
+                document.getElementById('active-uid').innerText = uid;
+                document.getElementById('root-status').innerText = "API Hooked: v2.5.4 Secure";
 
-                let result = dictionary[hash];
-
-                // Nếu không có trong database cục bộ, hệ thống sẽ thực hiện Brute Force ảo
-                // để trả về kết quả dự đoán (đúng cho các chuỗi ngắn)
-                if(!result) {
-                    // Logic mô phỏng: Nếu là chuỗi MD5 từ văn bản ngắn, 
-                    // ta sẽ cố gắng trả về giá trị "Unknown" nhưng giao diện vẫn chuyên nghiệp
-                    result = "NOT_IN_DB_774"; 
-                    addLog("Hash not found in standard dictionary. Searching Deep-Web Nodes...", true);
-                    await new Promise(r => setTimeout(r, 2000));
-                    result = "key_" + hash.substring(0,6); // Giả lập bẻ khóa phần đầu
-                }
-
-                document.getElementById('finalResult').innerText = result;
-                pView.classList.add('hidden');
-                rView.classList.remove('hidden');
-                addLog("Cracking Complete.", true);
-
-            } catch (e) {
-                addLog("Network Error: API Offline.", true);
-            }
-            btn.disabled = false;
+                addLog(`Liên kết thành công với com.garena.msdk.guest_uid: ${uid}`, 'root');
+                addLog(`Tìm thấy file guest100067.dat tại thư mục root.`, 'success');
+                addLog(`Bắt đầu lắng nghe gói tin TCP từ Game API...`, 'api');
+            }, 2000);
         }
 
-        function copyResult() {
-            const res = document.getElementById('finalResult').innerText;
-            navigator.clipboard.writeText(res);
-            addLog("Result copied to clipboard.");
+        function sendQuick(cmd) {
+            cmdInput.value = cmd;
+            handleCommand();
         }
 
-        function reset() {
-            document.getElementById('hashInput').value = "";
-            document.getElementById('resultView').classList.add('hidden');
-            document.getElementById('actionBtn').disabled = false;
-        }
-
-        // Tự động resize canvas
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        cmdInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleCommand();
         });
+
+        function handleCommand() {
+            const input = cmdInput.value.trim();
+            if (!input) return;
+
+            addLog(input, 'cmd');
+            cmdInput.value = '';
+
+            const args = input.split(' ');
+            const cmd = args[0].toLowerCase();
+
+            // Xử lý logic API giả lập
+            setTimeout(() => {
+                switch(cmd) {
+                    case '/help':
+                        addLog('Hệ thống lệnh TCP Bot:', 'api');
+                        addLog('---', 'info');
+                        addLog('/join : Inject gói tin vào nhóm hiện tại.', 'info');
+                        addLog('/evo [uid] [act] : Gửi mã hành động súng tới server.', 'info');
+                        addLog('/evos [uid] : Vòng lặp hành động toàn nhóm.', 'info');
+                        addLog('/evose : Kill process vòng lặp hành động.', 'info');
+                        break;
+
+                    case '/join':
+                        addLog('Đang quét bộ nhớ game để tìm GroupID...', 'info');
+                        addLog('Đã tìm thấy API Hook. Bot đã vào nhóm.', 'success');
+                        break;
+
+                    case '/evo':
+                        const target = args[1] || 'Self';
+                        const id = args[2] || '1';
+                        addLog(`Gửi Packet: Action_Emote_Evo_${id} -> UID: ${target}`, 'api');
+                        addLog(`Thực thi API: Success`, 'success');
+                        break;
+
+                    case '/evos':
+                        addLog('BẮT ĐẦU CHUỖI EVOS TRÊN TOÀN BỘ NHÓM', 'root');
+                        let step = 1;
+                        if(evoLoop) clearInterval(evoLoop);
+                        evoLoop = setInterval(() => {
+                            if(step > 7) {
+                                addLog('Chuỗi hành động hoàn tất.', 'success');
+                                clearInterval(evoLoop);
+                                return;
+                            }
+                            addLog(`Injecting Emote_Packet_0${step} tới API Server...`, 'api');
+                            step++;
+                        }, 1200);
+                        break;
+
+                    case '/evose':
+                        if(evoLoop) {
+                            clearInterval(evoLoop);
+                            addLog('DỪNG HÀNH ĐỘNG: Đã ngắt luồng thực thi API.', 'root');
+                        }
+                        break;
+
+                    default:
+                        addLog('Lệnh không xác định trên hệ thống root.', 'root');
+                }
+            }, 500);
+        }
     </script>
 </body>
 </html>
