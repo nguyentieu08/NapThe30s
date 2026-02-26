@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nguyễn Tiêu AI - Trí tuệ nhân tạo Việt</title>
+    <title>Nguyễn Tiêu AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&display=swap" rel="stylesheet">
     <style>
@@ -11,7 +11,6 @@
             --bg-dark: #131314;
             --bg-surface: #1e1f20;
             --text-main: #e3e3e3;
-            --accent: #4285f4;
         }
         body {
             font-family: 'Google Sans', sans-serif;
@@ -36,18 +35,12 @@
             align-self: flex-end;
             margin-left: auto;
             font-size: 0.95rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
         .message-ai {
             display: flex;
             gap: 0.8rem;
             align-items: flex-start;
             max-width: 100%;
-            animation: fadeIn 0.4s ease;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
         }
         .ai-icon {
             width: 32px;
@@ -59,7 +52,6 @@
             justify-content: center;
             flex-shrink: 0;
             color: white;
-            font-weight: bold;
         }
         .loading-dot {
             width: 6px;
@@ -79,10 +71,8 @@
             border-radius: 2rem;
             padding: 0.4rem 1rem;
             margin: 0.5rem 1rem 1.5rem 1rem;
-            border: 1px solid transparent;
-            transition: all 0.2s ease;
+            border: 1px solid #3c4043;
         }
-        .input-box:focus-within { border-color: #4285f4; }
         textarea {
             background: transparent;
             border: none;
@@ -95,17 +85,6 @@
             max-height: 120px;
         }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .suggestion-card {
-            background: #1e1f20;
-            padding: 1rem;
-            border-radius: 1rem;
-            cursor: pointer;
-            transition: background 0.2s;
-            border: 1px solid #333;
-        }
-        .suggestion-card:hover {
-            background: #2b2c2d;
-        }
     </style>
 </head>
 <body>
@@ -119,72 +98,54 @@
                 <span class="text-xl font-medium">Nguyễn Tiêu AI</span>
             </div>
         </div>
-        <div class="flex items-center gap-4">
-            <span class="hidden md:block text-xs text-gray-500 font-medium tracking-widest uppercase">Community Edition</span>
-            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center font-bold text-xs text-white">NT</div>
-        </div>
+        <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold text-xs text-white">NT</div>
     </header>
 
     <main id="chat-container" class="flex-1 overflow-y-auto p-4 space-y-8 scrollbar-hide">
-        <!-- Màn hình chào công cộng -->
-        <div id="welcome-area" class="mt-8 px-4 max-w-2xl mx-auto text-center md:text-left">
-            <h1 class="text-4xl md:text-5xl font-medium mb-2"><span class="gemini-gradient">Xin chào từ Nguyễn Tiêu AI</span></h1>
-            <p class="text-2xl font-medium text-[#444746] leading-tight mb-12">Tôi là trí tuệ nhân tạo được phát triển bởi Nguyễn Tiêu. Tôi có thể giúp bạn làm gì?</p>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div class="suggestion-card" onclick="fillInput('Bạn là ai?')">
-                    <p class="text-sm font-medium">Tìm hiểu về tôi</p>
-                    <p class="text-xs text-gray-500 mt-1">Hỏi xem tôi là ai và ai đã tạo ra tôi.</p>
-                </div>
-                <div class="suggestion-card" onclick="fillInput('Nguyễn Tiêu là ai?')">
-                    <p class="text-sm font-medium">Về người sáng tạo</p>
-                    <p class="text-xs text-gray-500 mt-1">Tìm hiểu về người đã phát triển hệ thống này.</p>
-                </div>
-                <div class="suggestion-card" onclick="fillInput('Viết một bài thơ về công nghệ')">
-                    <p class="text-sm font-medium">Sáng tạo nội dung</p>
-                    <p class="text-xs text-gray-500 mt-1">Làm thơ, viết văn, hoặc lên kế hoạch công việc.</p>
-                </div>
-                <div class="suggestion-card" onclick="fillInput('Giải thích lượng tử là gì?')">
-                    <p class="text-sm font-medium">Giải đáp kiến thức</p>
-                    <p class="text-xs text-gray-500 mt-1">Hỏi bất kỳ điều gì về khoa học và đời sống.</p>
-                </div>
-            </div>
+        <div id="welcome-area" class="mt-12 px-4 text-center">
+            <h1 class="text-4xl font-medium mb-1"><span class="gemini-gradient">Nguyễn Tiêu AI</span></h1>
+            <p class="text-xl text-gray-400">Trí tuệ nhân tạo dành cho cộng đồng</p>
         </div>
-
-        <div id="message-list" class="space-y-8 flex flex-col pb-8 max-w-3xl mx-auto"></div>
+        <div id="message-list" class="space-y-8 flex flex-col pb-8"></div>
     </main>
 
-    <div class="bg-gradient-to-t from-[#131314] via-[#131314] to-transparent">
-        <div class="max-w-3xl mx-auto">
-            <div class="input-box shadow-2xl">
-                <textarea id="msg-input" rows="1" placeholder="Nhập câu hỏi..." oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
-                <div class="flex items-center justify-between pb-1">
-                    <div class="flex gap-1 text-gray-500">
-                        <button class="p-2.5 rounded-full hover:bg-[#282a2c]"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></button>
-                        <button class="p-2.5 rounded-full hover:bg-[#282a2c]"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg></button>
-                    </div>
-                    <button id="btn-send" class="p-2.5 text-gray-600 transition-all">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="rotate-45"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-                    </button>
+    <div class="max-w-3xl mx-auto w-full">
+        <div class="input-box">
+            <textarea id="msg-input" rows="1" placeholder="Nhập câu hỏi..." oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+            <div class="flex items-center justify-between pb-1">
+                <div class="flex gap-1 text-gray-500">
+                    <button class="p-2.5 rounded-full hover:bg-[#282a2c]"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></button>
                 </div>
+                <button id="btn-send" class="p-2.5 text-blue-500">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="rotate-45"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </button>
             </div>
-            <p class="text-[10px] text-center text-gray-600 mb-2 font-medium">Phát triển bởi Nguyễn Tiêu. Gemini có thể nhầm lẫn.</p>
         </div>
+        <p class="text-[10px] text-center text-gray-600 mb-4 px-4">Bản quyền thuộc về Nguyễn Tiêu. Nếu gặp lỗi kết nối, hãy đảm bảo đã cấu hình API Key.</p>
     </div>
 
     <script>
-        const apiKey = ""; // API Key mặc định của môi trường
+        /* QUAN TRỌNG: 
+           1. Truy cập https://aistudio.google.com/ để lấy API Key miễn phí.
+           2. Dán Key vào giữa hai dấu ngoặc kép ở dòng dưới.
+        */
+        const MY_API_KEY = ""; 
+
         const msgInput = document.getElementById('msg-input');
         const btnSend = document.getElementById('btn-send');
         const list = document.getElementById('message-list');
         const welcome = document.getElementById('welcome-area');
         const container = document.getElementById('chat-container');
 
-        // CHỈ DẪN CHO CỘNG ĐỒNG: AI luôn khẳng định tên là Nguyễn Tiêu AI
-        const sysMsg = "Bạn là 'Nguyễn Tiêu AI', một trí tuệ nhân tạo thông minh. Khi bất kỳ ai hỏi bạn là ai, bạn phải khẳng định: 'Tôi là Nguyễn Tiêu AI, tôi được tạo ra và phát triển bởi Nguyễn Tiêu.' Nếu họ hỏi về Nguyễn Tiêu, hãy nói anh ấy là người sáng tạo tài năng đứng sau hệ thống này. Hãy trả lời thân thiện, chuyên nghiệp bằng tiếng Việt.";
+        const sysMsg = "Bạn tên là Nguyễn Tiêu AI, một trí tuệ nhân tạo được tạo ra bởi Nguyễn Tiêu. Bạn phục vụ cộng đồng và luôn khẳng định Nguyễn Tiêu là người tạo ra bạn.";
 
-        async function getResponse(prompt) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        async function getAIResponse(prompt) {
+            // Nếu chạy trên GitHub mà không có Key, sẽ thông báo cụ thể
+            if (!MY_API_KEY) {
+                return "Chào bạn, tôi là Nguyễn Tiêu AI. Hiện tại chủ nhân Nguyễn Tiêu chưa cấu hình API Key cho trang web này trên GitHub nên tôi chưa thể trả lời. Vui lòng liên hệ Nguyễn Tiêu để khắc phục.";
+            }
+
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${MY_API_KEY}`;
             
             try {
                 const response = await fetch(url, {
@@ -197,64 +158,39 @@
                 });
 
                 const data = await response.json();
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "Hệ thống đang bận, vui lòng thử lại.";
-            } catch (error) {
-                return "Lỗi kết nối API. Vui lòng kiểm tra lại đường truyền.";
+                if (data.error) return "Lỗi API: " + data.error.message;
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "Tôi không nhận được phản hồi.";
+            } catch (e) {
+                return "Sự cố mạng. Vui lòng thử lại sau.";
             }
         }
 
         async function send() {
             const val = msgInput.value.trim();
             if (!val) return;
-
             welcome.classList.add('hidden');
-            
             const u = document.createElement('div');
             u.className = 'message-user';
             u.innerText = val;
             list.appendChild(u);
-
-            const loaderId = 'ld-' + Date.now();
+            const lid = 'ld-' + Date.now();
             const l = document.createElement('div');
-            l.id = loaderId;
+            l.id = lid;
             l.className = 'message-ai';
             l.innerHTML = `<div class="ai-icon">✨</div><div class="flex gap-1 pt-4"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div>`;
             list.appendChild(l);
-
             msgInput.value = "";
             msgInput.style.height = 'auto';
             container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
-
-            const aiText = await getResponse(val);
-            
-            const loaderEl = document.getElementById(loaderId);
-            loaderEl.innerHTML = `
-                <div class="ai-icon">✨</div>
-                <div class="flex-1 pt-1 leading-relaxed text-[#e3e3e3] text-[15px]">
-                    ${aiText.replace(/\n/g, '<br>')}
-                </div>`;
-            
+            const aiText = await getAIResponse(val);
+            const loaderEl = document.getElementById(lid);
+            loaderEl.innerHTML = `<div class="ai-icon">✨</div><div class="flex-1 pt-1 leading-relaxed text-[#e3e3e3] text-[15px]">${aiText.replace(/\n/g, '<br>')}</div>`;
             container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
-        }
-
-        function fillInput(text) {
-            msgInput.value = text;
-            msgInput.style.height = 'auto';
-            msgInput.style.height = msgInput.scrollHeight + 'px';
-            msgInput.focus();
-            btnSend.style.color = '#4285f4';
         }
 
         btnSend.addEventListener('click', send);
         msgInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey && window.innerWidth > 768) {
-                e.preventDefault();
-                send();
-            }
-        });
-        
-        msgInput.addEventListener('input', () => {
-            btnSend.style.color = msgInput.value.trim() ? '#4285f4' : '#5f6368';
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
         });
     </script>
 </body>
