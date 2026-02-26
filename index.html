@@ -35,12 +35,18 @@
             align-self: flex-end;
             margin-left: auto;
             font-size: 0.95rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
         .message-ai {
             display: flex;
             gap: 0.8rem;
             align-items: flex-start;
             max-width: 100%;
+            animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .ai-icon {
             width: 32px;
@@ -52,6 +58,7 @@
             justify-content: center;
             flex-shrink: 0;
             color: white;
+            font-weight: bold;
         }
         .loading-dot {
             width: 6px;
@@ -72,7 +79,9 @@
             padding: 0.4rem 1rem;
             margin: 0.5rem 1rem 1.5rem 1rem;
             border: 1px solid #3c4043;
+            transition: all 0.2s ease;
         }
+        .input-box:focus-within { border-color: #4285f4; }
         textarea {
             background: transparent;
             border: none;
@@ -85,6 +94,14 @@
             max-height: 120px;
         }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .error-msg {
+            color: #f28b82;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            background: rgba(242, 139, 130, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -98,38 +115,41 @@
                 <span class="text-xl font-medium">Nguyễn Tiêu AI</span>
             </div>
         </div>
-        <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold text-xs text-white">NT</div>
+        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center font-bold text-xs text-white">NT</div>
     </header>
 
     <main id="chat-container" class="flex-1 overflow-y-auto p-4 space-y-8 scrollbar-hide">
-        <div id="welcome-area" class="mt-12 px-4 text-center">
+        <div id="welcome-area" class="mt-12 px-4 text-center max-w-xl mx-auto">
             <h1 class="text-4xl font-medium mb-1"><span class="gemini-gradient">Nguyễn Tiêu AI</span></h1>
-            <p class="text-xl text-gray-400">Trí tuệ nhân tạo dành cho cộng đồng</p>
-        </div>
-        <div id="message-list" class="space-y-8 flex flex-col pb-8"></div>
-    </main>
-
-    <div class="max-w-3xl mx-auto w-full">
-        <div class="input-box">
-            <textarea id="msg-input" rows="1" placeholder="Nhập câu hỏi..." oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
-            <div class="flex items-center justify-between pb-1">
-                <div class="flex gap-1 text-gray-500">
-                    <button class="p-2.5 rounded-full hover:bg-[#282a2c]"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></button>
-                </div>
-                <button id="btn-send" class="p-2.5 text-blue-500">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="rotate-45"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-                </button>
+            <p class="text-lg text-gray-400">Trí tuệ nhân tạo phục vụ cộng đồng</p>
+            <div class="mt-6 p-4 bg-[#1e1f20] rounded-xl text-left border border-white/5">
+                <p class="text-sm text-gray-300">👋 Chào mừng! Tôi là Nguyễn Tiêu AI. Hãy hỏi tôi bất cứ điều gì.</p>
             </div>
         </div>
-        <p class="text-[10px] text-center text-gray-600 mb-4 px-4">Bản quyền thuộc về Nguyễn Tiêu. Nếu gặp lỗi kết nối, hãy đảm bảo đã cấu hình API Key.</p>
+        <div id="message-list" class="space-y-8 flex flex-col pb-8 max-w-3xl mx-auto w-full"></div>
+    </main>
+
+    <div class="bg-gradient-to-t from-[#131314] via-[#131314] to-transparent">
+        <div class="max-w-3xl mx-auto w-full">
+            <div class="input-box shadow-2xl">
+                <textarea id="msg-input" rows="1" placeholder="Nhập câu hỏi..." oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+                <div class="flex items-center justify-between pb-1">
+                    <div class="flex gap-1 text-gray-500">
+                        <button class="p-2.5 rounded-full hover:bg-[#282a2c]"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></button>
+                    </div>
+                    <button id="btn-send" class="p-2.5 text-gray-500 transition-all">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="rotate-45"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    </button>
+                </div>
+            </div>
+            <p class="text-[10px] text-center text-gray-600 mb-4 px-4">Bản quyền thuộc về Nguyễn Tiêu. Trí tuệ nhân tạo có thể sai sót.</p>
+        </div>
     </div>
 
     <script>
-        /* QUAN TRỌNG: 
-           1. Truy cập https://aistudio.google.com/ để lấy API Key miễn phí.
-           2. Dán Key vào giữa hai dấu ngoặc kép ở dòng dưới.
-        */
-        const MY_API_KEY = "AIzaSyDjA6A7UqGNbclIlZaVZK5joqbyXqDl7Xo"; 
+        // === DÁN API KEY CỦA BẠN VÀO GIỮA DẤU NGOẶC KÉP DƯỚI ĐÂY ===
+        const CONFIG_API_KEY = "AIzaSyBTiWkUX1PVAzCqLUceb85z4B2h2RszaeY"; 
+        // ==========================================================
 
         const msgInput = document.getElementById('msg-input');
         const btnSend = document.getElementById('btn-send');
@@ -137,60 +157,93 @@
         const welcome = document.getElementById('welcome-area');
         const container = document.getElementById('chat-container');
 
-        const sysMsg = "Bạn tên là Nguyễn Tiêu AI, một trí tuệ nhân tạo được tạo ra bởi Nguyễn Tiêu. Bạn phục vụ cộng đồng và luôn khẳng định Nguyễn Tiêu là người tạo ra bạn.";
+        const systemInstruction = "Bạn tên là Nguyễn Tiêu AI. Bạn được tạo ra bởi Nguyễn Tiêu để phục vụ cộng đồng. Khi có người hỏi bạn là ai hoặc ai tạo ra bạn, hãy trả lời rõ ràng rằng bạn là Nguyễn Tiêu AI và Nguyễn Tiêu là người sáng tạo duy nhất của bạn. Trả lời thân thiện và chuyên nghiệp.";
 
-        async function getAIResponse(prompt) {
-            // Nếu chạy trên GitHub mà không có Key, sẽ thông báo cụ thể
-            if (!MY_API_KEY) {
-                return "Chào bạn, tôi là Nguyễn Tiêu AI. Hiện tại chủ nhân Nguyễn Tiêu chưa cấu hình API Key cho trang web này trên GitHub nên tôi chưa thể trả lời. Vui lòng liên hệ Nguyễn Tiêu để khắc phục.";
+        async function getAIResponse(userText) {
+            if (!CONFIG_API_KEY) {
+                return "⚠️ LỖI: Chủ nhân chưa cấu hình API Key. Hãy dán Key vào mã nguồn để Nguyễn Tiêu AI có thể hoạt động.";
             }
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${MY_API_KEY}`;
+            // Sử dụng model gemini-1.5-flash để đảm bảo tương thích cao nhất
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${CONFIG_API_KEY}`;
             
             try {
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: prompt }] }],
-                        systemInstruction: { parts: [{ text: sysMsg }] }
+                        contents: [{ parts: [{ text: userText }] }],
+                        systemInstruction: { parts: [{ text: systemInstruction }] }
                     })
                 });
 
                 const data = await response.json();
-                if (data.error) return "Lỗi API: " + data.error.message;
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "Tôi không nhận được phản hồi.";
+
+                if (data.error) {
+                    console.error("API Error Detail:", data.error);
+                    return `❌ Lỗi API (${data.error.code}): ${data.error.message}. Hãy kiểm tra xem API Key của bạn có bị giới hạn vùng địa lý không.`;
+                }
+
+                if (data.candidates && data.candidates[0].content) {
+                    return data.candidates[0].content.parts[0].text;
+                }
+                
+                return "Tôi đã nhận được yêu cầu nhưng không thể tạo ra phản hồi phù hợp.";
             } catch (e) {
-                return "Sự cố mạng. Vui lòng thử lại sau.";
+                return "🌐 Lỗi kết nối: Không thể gửi yêu cầu đến máy chủ AI. Vui lòng kiểm tra lại mạng của bạn.";
             }
         }
 
-        async function send() {
-            const val = msgInput.value.trim();
-            if (!val) return;
+        async function handleSend() {
+            const text = msgInput.value.trim();
+            if (!text) return;
+
             welcome.classList.add('hidden');
+            
+            // Render User Message
             const u = document.createElement('div');
             u.className = 'message-user';
-            u.innerText = val;
+            u.innerText = text;
             list.appendChild(u);
-            const lid = 'ld-' + Date.now();
-            const l = document.createElement('div');
-            l.id = lid;
-            l.className = 'message-ai';
-            l.innerHTML = `<div class="ai-icon">✨</div><div class="flex gap-1 pt-4"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div>`;
-            list.appendChild(l);
+
+            // Render AI Loading
+            const lid = 'id-' + Date.now();
+            const aiLoading = document.createElement('div');
+            aiLoading.id = lid;
+            aiLoading.className = 'message-ai';
+            aiLoading.innerHTML = `
+                <div class="ai-icon">✨</div>
+                <div class="flex gap-1 pt-4">
+                    <div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div>
+                </div>`;
+            list.appendChild(aiLoading);
+
             msgInput.value = "";
             msgInput.style.height = 'auto';
             container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
-            const aiText = await getAIResponse(val);
-            const loaderEl = document.getElementById(lid);
-            loaderEl.innerHTML = `<div class="ai-icon">✨</div><div class="flex-1 pt-1 leading-relaxed text-[#e3e3e3] text-[15px]">${aiText.replace(/\n/g, '<br>')}</div>`;
+
+            // Call API
+            const response = await getAIResponse(text);
+            
+            const loader = document.getElementById(lid);
+            loader.innerHTML = `
+                <div class="ai-icon">✨</div>
+                <div class="flex-1 pt-1 leading-relaxed text-[#e3e3e3] text-[15px]">
+                    ${response.replace(/\n/g, '<br>')}
+                </div>
+            `;
             container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
         }
 
-        btnSend.addEventListener('click', send);
+        btnSend.addEventListener('click', handleSend);
         msgInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+            }
+        });
+        msgInput.addEventListener('input', () => {
+            btnSend.style.color = msgInput.value.trim() ? '#4285f4' : '#5f6368';
         });
     </script>
 </body>
