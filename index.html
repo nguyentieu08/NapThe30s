@@ -3,109 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gemini AI - Real Response</title>
+    <title>Gemini</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Google Sans', sans-serif; background-color: #131314; color: #e3e3e3; overflow: hidden; }
+        :root {
+            --bg-dark: #131314;
+            --bg-surface: #1e1f20;
+            --bg-hover: #282a2c;
+            --text-main: #e3e3e3;
+            --text-sub: #8e918f;
+        }
+        body {
+            font-family: 'Google Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            overflow: hidden;
+        }
         .gemini-gradient {
-            background: linear-gradient(74deg, #4285f4 0, #9b72cb 9%, #d96570 20%, #131314 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background: linear-gradient(74deg, #4285f4 0, #9b72cb 9%, #d96570 20%, #ffffff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        .input-container { background-color: #1e1f20; border-radius: 32px; }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        #sidebar { transition: transform 0.3s ease, width 0.3s ease; }
+        .sidebar-transition {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .loading-dot {
+            animation: wave 1.2s infinite ease-in-out;
+        }
+        @keyframes wave {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #3c4043;
+            border-radius: 10px;
+        }
         @media (max-width: 768px) {
-            #sidebar { position: fixed; transform: translateX(-100%); z-index: 50; height: 100%; }
-            #sidebar.open { transform: translateX(0); }
+            .mobile-hide { display: none; }
+            .sidebar-closed { transform: translateX(-100%); }
         }
-        .message-ai { line-height: 1.6; color: #e3e3e3; }
-        .message-ai code { background: #2d2d2d; padding: 2px 5px; border-radius: 4px; font-family: monospace; }
-        .loading-dots span { animation: blink 1.4s infinite both; font-size: 24px; }
-        .loading-dots span:nth-child(2) { animation-delay: .2s; }
-        .loading-dots span:nth-child(3) { animation-delay: .4s; }
-        @keyframes blink { 0% { opacity: .2; } 20% { opacity: 1; } 100% { opacity: .2; } }
     </style>
 </head>
 <body class="flex h-screen w-screen">
 
-    <div id="overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-40 hidden"></div>
+    <!-- Overlay cho Mobile -->
+    <div id="overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 z-40 hidden opacity-0 transition-opacity duration-300"></div>
 
-    <aside id="sidebar" class="w-64 bg-[#1e1f20] flex flex-col shrink-0 border-r border-gray-800 md:border-none">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar-transition w-64 bg-[#1e1f20] flex flex-col z-50 fixed md:relative h-full sidebar-closed md:transform-none">
         <div class="p-4 flex flex-col h-full">
             <button onclick="toggleSidebar()" class="p-3 w-fit rounded-full hover:bg-[#333537] mb-8">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </button>
-            <div onclick="location.reload()" class="flex items-center gap-3 px-4 py-3 bg-[#131314] rounded-full text-gray-400 cursor-pointer hover:bg-[#282a2c] w-fit mb-6">
+            
+            <button onclick="window.location.reload()" class="flex items-center gap-3 px-4 py-3 bg-[#131314] rounded-full text-gray-400 hover:bg-[#282a2c] transition-all w-fit mb-8 shadow-sm">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                <span class="text-sm font-medium pr-2">Trò chuyện mới</span>
-            </div>
-            <div class="flex-1 overflow-y-auto scrollbar-hide">
-                <p class="text-xs font-medium px-4 py-2 text-gray-500 uppercase">Gần đây</p>
-                <div id="history-list" class="space-y-1"></div>
+                <span class="text-sm font-medium pr-2">Cuộc trò chuyện mới</span>
+            </button>
+
+            <div class="flex-1 overflow-y-auto custom-scrollbar">
+                <p class="text-xs font-medium px-4 py-2 text-gray-500 uppercase tracking-widest">Gần đây</p>
+                <div class="space-y-1">
+                    <div class="flex items-center gap-3 px-4 py-2.5 rounded-full hover:bg-[#282a2c] cursor-pointer text-sm truncate">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                        <span>Giao diện Gemini 100%</span>
+                    </div>
+                </div>
             </div>
         </div>
     </aside>
 
-    <main class="flex-1 flex flex-col min-w-0 bg-[#131314] relative">
-        <nav class="flex items-center justify-between p-4 sticky top-0 bg-[#131314]/80 backdrop-blur-md z-30">
-            <button onclick="toggleSidebar()" class="md:hidden p-2 rounded-full hover:bg-[#333537]">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line></svg>
-            </button>
-            <span class="text-xl font-medium px-4">Gemini</span>
-            <div class="w-9 h-9 rounded-full bg-indigo-600 flex items-center justify-center font-bold text-sm mx-4">G</div>
-        </nav>
-
-        <div id="scroll-area" class="flex-1 overflow-y-auto px-4 md:px-20 lg:px-40 pb-44 scrollbar-hide">
-            <div id="welcome-screen" class="max-w-3xl mx-auto pt-16">
-                <h1 class="text-4xl md:text-6xl font-medium mb-2"><span class="gemini-gradient">Xin chào, tôi là Gemini</span></h1>
-                <p class="text-4xl md:text-5xl font-medium text-[#444746]">Hôm nay tôi có thể giúp gì cho bạn?</p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-12">
-                    <div onclick="fillInput('Giải thích về trí tuệ nhân tạo')" class="bg-[#1e1f20] p-4 rounded-2xl cursor-pointer hover:bg-[#333537]">Giải thích về trí tuệ nhân tạo...</div>
-                    <div onclick="fillInput('Gợi ý thực đơn tối nay')" class="bg-[#1e1f20] p-4 rounded-2xl cursor-pointer hover:bg-[#333537]">Gợi ý thực đơn tối nay...</div>
+    <!-- Main -->
+    <main class="flex-1 flex flex-col min-w-0 relative">
+        <!-- Top Nav -->
+        <nav class="flex items-center justify-between p-4 bg-[#131314]">
+            <div class="flex items-center gap-2">
+                <button onclick="toggleSidebar()" class="md:hidden p-2 rounded-full hover:bg-[#333537]">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line></svg>
+                </button>
+                <div class="px-3 py-1 rounded-lg hover:bg-[#1e1f20] cursor-pointer flex items-center gap-1">
+                    <span class="text-xl font-medium">Gemini</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-gray-500 mt-1"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </div>
             </div>
-            <div id="chat-messages" class="max-w-3xl mx-auto mt-8 space-y-8 hidden"></div>
+            <div class="flex items-center gap-3">
+                <button class="mobile-hide px-4 py-2 bg-[#1e1f20] hover:bg-[#333537] text-sm font-medium rounded-lg text-blue-400">Dùng thử Gemini Advanced</button>
+                <div class="w-10 h-10 rounded-full bg-indigo-700 flex items-center justify-center font-bold text-white shadow-lg">G</div>
+            </div>
+        </nav>
+
+        <!-- Chat Area -->
+        <div id="scroll-container" class="flex-1 overflow-y-auto px-4 md:px-20 lg:px-44 pb-48 custom-scrollbar pt-8">
+            <div id="intro" class="max-w-3xl mx-auto space-y-2 mt-12">
+                <h1 class="text-5xl md:text-6xl font-medium"><span class="gemini-gradient">Xin chào, tôi là Gemini</span></h1>
+                <p class="text-4xl md:text-5xl font-medium text-[#444746] leading-tight">Hôm nay tôi có thể giúp gì cho bạn?</p>
+            </div>
+
+            <div id="messages" class="max-w-3xl mx-auto mt-12 space-y-10 hidden"></div>
         </div>
 
+        <!-- Input Box -->
         <div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-[#131314] via-[#131314] to-transparent">
-            <div class="max-w-3xl mx-auto">
-                <div class="input-container p-2 flex flex-col border border-transparent focus-within:border-gray-600 shadow-2xl">
-                    <textarea id="main-input" rows="1" placeholder="Nhập câu hỏi tại đây..." class="w-full bg-transparent border-none outline-none px-4 py-3 text-lg resize-none max-h-60 overflow-y-auto" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+            <div class="max-w-3xl mx-auto relative">
+                <div class="bg-[#1e1f20] rounded-[32px] p-2 flex flex-col shadow-2xl border border-transparent focus-within:border-gray-700 transition-all">
+                    <textarea id="chat-input" rows="1" placeholder="Nhập câu hỏi tại đây..." class="w-full bg-transparent border-none outline-none px-4 py-3 text-lg resize-none max-h-[200px] overflow-y-auto" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+                    
                     <div class="flex items-center justify-between px-2 pb-1">
-                        <div class="flex gap-2 text-gray-400 p-2">🖼️ 🎙️</div>
-                        <button id="send-btn" class="p-2.5 rounded-full text-gray-600 transition-colors">
+                        <div class="flex gap-1 text-gray-400">
+                            <button class="p-2.5 rounded-full hover:bg-[#333537]"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></button>
+                            <button class="p-2.5 rounded-full hover:bg-[#333537]"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg></button>
+                        </div>
+                        <button id="btn-send" class="p-3 rounded-full text-gray-600 transition-all disabled:opacity-30">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                         </button>
                     </div>
                 </div>
-                <p class="text-[11px] text-center text-gray-500 mt-4">Gemini có thể đưa ra thông tin không chính xác.</p>
+                <p class="text-[11px] text-center text-gray-500 mt-4 px-6">Gemini có thể đưa ra thông tin không chính xác, kể cả về con người, vì vậy hãy kiểm tra kỹ các câu trả lời.</p>
             </div>
         </div>
     </main>
 
     <script>
-        const apiKey = ""; // API Key sẽ được hệ thống tự động chèn vào khi chạy
-        const mainInput = document.getElementById('main-input');
-        const sendBtn = document.getElementById('send-btn');
-        const chatMessages = document.getElementById('chat-messages');
-        const welcomeScreen = document.getElementById('welcome-screen');
-        const scrollArea = document.getElementById('scroll-area');
+        const apiKey = ""; // API key tự động được cung cấp
+        const chatInput = document.getElementById('chat-input');
+        const btnSend = document.getElementById('btn-send');
+        const messagesDiv = document.getElementById('messages');
+        const introDiv = document.getElementById('intro');
+        const scrollContainer = document.getElementById('scroll-area');
 
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('hidden');
+            if (window.innerWidth < 768) {
+                sidebar.classList.toggle('sidebar-closed');
+                overlay.classList.toggle('hidden');
+                setTimeout(() => overlay.classList.toggle('opacity-100'), 10);
+            }
         }
 
-        async function callGemini(prompt) {
+        async function fetchGemini(prompt) {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
             
             let retries = 0;
-            const delays = [1000, 2000, 4000, 8000, 16000];
+            const backoff = [1000, 2000, 4000];
 
-            while (retries < 5) {
+            while (retries < 3) {
                 try {
                     const response = await fetch(url, {
                         method: 'POST',
@@ -113,53 +160,74 @@
                         body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                     });
                     const data = await response.json();
-                    return data.candidates?.[0]?.content?.parts?.[0]?.text || "Không có phản hồi.";
-                } catch (error) {
+                    if (data.candidates && data.candidates[0]) {
+                        return data.candidates[0].content.parts[0].text;
+                    }
+                    throw new Error("Dữ liệu không hợp lệ");
+                } catch (e) {
                     retries++;
-                    if (retries === 5) return "Lỗi kết nối. Vui lòng thử lại sau.";
-                    await new Promise(resolve => setTimeout(resolve, delays[retries-1]));
+                    if (retries < 3) await new Promise(r => setTimeout(r, backoff[retries-1]));
                 }
             }
+            return "Rất tiếc, tôi đang gặp sự cố kết nối. Vui lòng thử lại sau giây lát.";
         }
 
-        async function handleSend() {
-            const text = mainInput.value.trim();
+        async function sendMessage() {
+            const text = chatInput.value.trim();
             if (!text) return;
 
-            welcomeScreen.classList.add('hidden');
-            chatMessages.classList.remove('hidden');
+            introDiv.classList.add('hidden');
+            messagesDiv.classList.remove('hidden');
 
-            // Hiển thị tin nhắn người dùng
-            chatMessages.innerHTML += `<div class="flex flex-col items-end"><div class="bg-[#1e1f20] px-5 py-3 rounded-2xl max-w-[85%]">${text}</div></div>`;
-            
-            // Hiển thị trạng thái đang tải
-            const aiMsgId = 'ai-' + Date.now();
-            chatMessages.innerHTML += `
-                <div class="flex gap-4 items-start" id="${aiMsgId}">
-                    <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center shrink-0">✨</div>
-                    <div class="message-ai pt-1 flex-1">
-                        <div class="loading-dots"><span>.</span><span>.</span><span>.</span></div>
+            // Render User Message
+            messagesDiv.innerHTML += `
+                <div class="flex flex-col items-end animate-fade-in">
+                    <div class="bg-[#1e1f20] px-5 py-3 rounded-2xl max-w-[85%] text-gray-100 shadow-md">
+                        ${text.replace(/\n/g, '<br>')}
                     </div>
-                </div>`;
-            
-            mainInput.value = "";
-            mainInput.style.height = 'auto';
-            scrollArea.scrollTo({ top: scrollArea.scrollHeight, behavior: 'smooth' });
+                </div>
+            `;
 
-            // Gọi API thật
-            const response = await callGemini(text);
-            const aiContainer = document.getElementById(aiMsgId).querySelector('.message-ai');
-            aiContainer.innerHTML = response.replace(/\n/g, '<br>');
-            scrollArea.scrollTo({ top: scrollArea.scrollHeight, behavior: 'smooth' });
+            // Render AI Loading
+            const loadingId = 'loading-' + Date.now();
+            messagesDiv.innerHTML += `
+                <div id="${loadingId}" class="flex gap-4 items-start">
+                    <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center shrink-0 shadow-lg">✨</div>
+                    <div class="flex gap-1 pt-3">
+                        <div class="w-1.5 h-1.5 bg-gray-500 rounded-full loading-dot"></div>
+                        <div class="w-1.5 h-1.5 bg-gray-500 rounded-full loading-dot" style="animation-delay: 0.2s"></div>
+                        <div class="w-1.5 h-1.5 bg-gray-500 rounded-full loading-dot" style="animation-delay: 0.4s"></div>
+                    </div>
+                </div>
+            `;
+
+            chatInput.value = "";
+            chatInput.style.height = "auto";
+            document.getElementById('scroll-container').scrollTo({ top: 999999, behavior: 'smooth' });
+
+            // Call API
+            const reply = await fetchGemini(text);
+            
+            // Replace loading with content
+            const loadingEl = document.getElementById(loadingId);
+            loadingEl.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center shrink-0 shadow-lg">✨</div>
+                <div class="flex-1 text-gray-200 leading-relaxed pt-1">
+                    ${reply.replace(/\n/g, '<br>')}
+                </div>
+            `;
+            document.getElementById('scroll-container').scrollTo({ top: 999999, behavior: 'smooth' });
         }
 
-        function fillInput(t) { mainInput.value = t; mainInput.focus(); }
+        chatInput.addEventListener('input', () => {
+            btnSend.classList.toggle('text-blue-400', chatInput.value.trim().length > 0);
+        });
 
-        sendBtn.addEventListener('click', handleSend);
-        mainInput.addEventListener('keydown', (e) => {
+        btnSend.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey && window.innerWidth > 768) {
                 e.preventDefault();
-                handleSend();
+                sendMessage();
             }
         });
     </script>
